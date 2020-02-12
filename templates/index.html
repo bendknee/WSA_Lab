@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to LAW</title>
+</head>
+<body>
+    <h1>NUMBER FACTS</h1>
+    <h4>powered by <a href="http://numbersapi.com">numbersapi.com</a></h4>
+    <fieldset style="width: 30%">
+        <form action="{{ url_for('api', sub_api="numbers") }}" method="GET">
+            Enter Number:<br>
+            <input type="number" name="number"
+                    {% if fact %} value={{ fact.number }} {% endif %}
+            required><br>
+            <br>Fact Type:<br>
+            <input type="radio" name="type" value="trivia"> Trivia
+            <input type="radio" name="type" value="math"> Math
+            <input type="radio" name="type" value="year"> Year<br>
+            <br>Workaround (if fact not found):<br>
+            <input type="radio" name="notfound" value="floor"> Floor
+            <input type="radio" name="notfound" value="ceil"> Ceiling<br>
+            <br><input type="submit" value="Go">
+        </form>
+    </fieldset>
+
+    {% if fact %}
+        <h3> {{ fact.type|title }} fact about {{ fact.number }}: </h3>
+        <p><i>{{ fact.text }}</i></p>
+    {% endif %}
+</body>
+</html>
