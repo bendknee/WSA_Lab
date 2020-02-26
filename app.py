@@ -1,22 +1,11 @@
-from flask import Flask, render_template, request, abort, Response
-
-from api import numbers_api
+from flask import Flask, request, Response
 
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route('/', methods=['GET'])
 def index():
-    return render_template('index.html')
-
-
-@app.route('/api/<path:sub_api>', methods=['GET', 'POST'])
-def api(sub_api):
-    if sub_api == 'numbers':
-        try:
-            return render_template('index.html', fact=numbers_api(request.args))
-        except IOError:
-            abort(Response("Bad Request Exception: Missing number parameter", status=400))
+    return Response(str(float(request.args["x"]) * float(request.args["y"])), status=200)
 
 
 if __name__ == '__main__':
