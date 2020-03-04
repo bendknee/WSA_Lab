@@ -19,10 +19,9 @@ fs.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024
 
 @fs.route('/api/upload', methods=['POST'])
 def upload():
-    bearer_token = request.headers["Authorization"]
-    if bearer_token is None or bearer_token == '':
+    if "Authorization" in request.headers:
         abort(Response("No token provided (BEARER_TOKEN == NaN)", status=401))
-    if not authorized(bearer_token):
+    if not authorized(request.headers["Authorization"]):
         abort(Response("Invalid token or expired token", status=401))
 
     if FILE_ARG not in request.files:
@@ -40,10 +39,9 @@ def upload():
 
 @fs.route('/api/download/<filename>', methods=['GET'])
 def download(filename):
-    bearer_token = request.headers["Authorization"]
-    if bearer_token is None or bearer_token == '':
+    if "Authorization" in request.headers:
         abort(Response("No token provided (BEARER_TOKEN == NaN)", status=401))
-    if not authorized(bearer_token):
+    if not authorized(request.headers["Authorization"]):
         abort(Response("Invalid token or expired token", status=401))
     return send_from_directory(fs.config['UPLOAD_FOLDER'], filename)
 
@@ -58,11 +56,11 @@ def save_files(files):
 
     for file in files:
         if not allowed_file(file.filename):
-            response[FAILED_UPLOADS_KEY].append("{:s} extension is not allowed".format(file.filename.rsplit('.', 1)[1]))
+            response[FAILED_UPLOADS_KEY].append(".{:s} extension is not allowed".format(file.filename.rsplit('.', 1)[1]))
         else:
             clean_filename = secure_filename(file.filename)
             file.save(os.path.join(fs.config['UPLOAD_FOLDER'], clean_filename))
-            response[DOWNLOAD_LINK_KEY].append(request.host_url + "/api/download/" + clean_filename)
+            response[DOWNLOAD_LINK_KEY].append(request.host_url + "api/download/" + clean_filename)
 
     return response
 
