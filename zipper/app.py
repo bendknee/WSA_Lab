@@ -18,7 +18,7 @@ zipper.config['UPLOAD_FOLDER'] = UPLOAD_DIR
 zipper.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024
 
 
-@zipper.route('/api/zip')
+@zipper.route('/api/zip', methods=['POST'])
 def zippa():
     authenticate()
 
