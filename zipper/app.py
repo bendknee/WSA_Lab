@@ -1,5 +1,5 @@
 import os
-import zipfile
+import shutil
 from datetime import datetime
 
 from flask import Flask, abort, Response, request, send_from_directory
@@ -46,14 +46,19 @@ def allowed_file(filename):
 def zip_files(files):
 
     zip_name = "{:s}.zip".format(str(datetime.now().strftime('%Y%m%d%H%M%S')))
-    zipf = zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED)
+    # zipf = zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED)
     for file in files:
         if allowed_file(file.filename):
             clean_filename = secure_filename(file.filename)
             file.save(os.path.join(zipper.config['UPLOAD_FOLDER'], clean_filename))
-            zipf.write(os.path.join(zipper.config['UPLOAD_FOLDER'], clean_filename))
 
-    zipf.close()
+    shutil.make_archive(zip_name, 'zip',
+                        root_dir=zipper.config['UPLOAD_FOLDER'], base_dir=zipper.config['UPLOAD_FOLDER'])
+    # for root, _, filenames in os.walk(zipper.config['UPLOAD_FOLDER']):
+    #     for file in filenames:
+    #         zipf.write(os.path.join(root, file))
+
+    # zipf.close()
 
     return zip_name
 
