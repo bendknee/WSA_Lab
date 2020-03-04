@@ -19,7 +19,7 @@ fs.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024
 
 @fs.route('/api/upload', methods=['POST'])
 def upload():
-    if "Authorization" in request.headers:
+    if "Authorization" not in request.headers:
         abort(Response("No token provided (BEARER_TOKEN == NaN)", status=401))
     if not authorized(request.headers["Authorization"]):
         abort(Response("Invalid token or expired token", status=401))
@@ -39,7 +39,7 @@ def upload():
 
 @fs.route('/api/download/<filename>', methods=['GET'])
 def download(filename):
-    if "Authorization" in request.headers:
+    if "Authorization" not in request.headers:
         abort(Response("No token provided (BEARER_TOKEN == NaN)", status=401))
     if not authorized(request.headers["Authorization"]):
         abort(Response("Invalid token or expired token", status=401))
