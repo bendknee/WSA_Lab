@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, request, abort, Response, url_for, send_from_directory, jsonify
+from flask import Flask, request, abort, Response, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
 
 from fs.api import authorized
@@ -40,6 +40,11 @@ def upload():
 
 @fs.route('/api/download/<filename>', methods=['GET'])
 def download(filename):
+    bearer_token = request.headers["Authorization"]
+    if bearer_token is None or bearer_token == '':
+        abort(Response("No token provided (BEARER_TOKEN == NaN)", status=401))
+    if not authorized(bearer_token):
+        abort(Response("Invalid token or expired token", status=401))
     return send_from_directory(fs.config['UPLOAD_FOLDER'], filename)
 
 
@@ -57,7 +62,7 @@ def save_files(files):
         else:
             clean_filename = secure_filename(file.filename)
             file.save(os.path.join(fs.config['UPLOAD_FOLDER'], clean_filename))
-            response[DOWNLOAD_LINK_KEY].append(url_for('uploaded_file', filename=clean_filename))
+            response[DOWNLOAD_LINK_KEY].append(request.host_url + "/api/download/" + clean_filename)
 
     return response
 
