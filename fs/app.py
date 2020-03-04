@@ -7,6 +7,8 @@ from fs.api import authorized
 
 UPLOAD_DIR = '/home/fs'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'csv'}
+
+AUTHORIZATION_ARG = "Authorization"
 FILE_ARG = "file"
 
 DOWNLOAD_LINK_KEY = "download_link"
@@ -19,10 +21,7 @@ fs.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024
 
 @fs.route('/api/upload', methods=['POST'])
 def upload():
-    if "Authorization" not in request.headers:
-        abort(Response("No token provided (BEARER_TOKEN == NaN)", status=401))
-    if not authorized(request.headers["Authorization"]):
-        abort(Response("Invalid token or expired token", status=401))
+    authenticate()
 
     if FILE_ARG not in request.files:
         abort(Response("No 'file' argument found", status=400))
@@ -39,11 +38,15 @@ def upload():
 
 @fs.route('/api/download/<filename>', methods=['GET'])
 def download(filename):
-    if "Authorization" not in request.headers:
-        abort(Response("No token provided (BEARER_TOKEN == NaN)", status=401))
-    if not authorized(request.headers["Authorization"]):
-        abort(Response("Invalid token or expired token", status=401))
+    authenticate()
     return send_from_directory(fs.config['UPLOAD_FOLDER'], filename)
+
+
+def authenticate():
+    if AUTHORIZATION_ARG not in request.headers:
+        abort(Response("No token provided (BEARER_TOKEN == NaN)", status=401))
+    if not authorized(request.headers[AUTHORIZATION_ARG]):
+        abort(Response("Invalid token or expired token", status=401))
 
 
 def allowed_file(filename):
