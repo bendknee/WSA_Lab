@@ -51,8 +51,7 @@ def zip_files(files):
         if allowed_file(file.filename):
             clean_filename = secure_filename(file.filename)
             file.save(os.path.join(zipper.config['UPLOAD_FOLDER'], clean_filename))
-            zipf.write(os.path.join(zipper.config['UPLOAD_FOLDER'], clean_filename))
-
+            zipf.write(os.path.join(zipper.config['UPLOAD_FOLDER'], clean_filename), arcname=clean_filename)
     zipf.close()
 
     return zip_name
