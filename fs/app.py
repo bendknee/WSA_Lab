@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, request, abort, Response, send_from_directory, jsonify
+from flask import Flask, request, abort, Response, send_from_directory, json
 from werkzeug.utils import secure_filename
 
 from fs.api import authorized
@@ -33,9 +33,9 @@ def upload():
     response = save_files(request.files.getlist(FILE_ARG))
 
     if len(response[DOWNLOAD_LINK_KEY]) == 0:
-        return Response(jsonify(response), status=400)
+        return Response(json.dumps(response), status=400, content_type='application/json')
     else:
-        return Response(jsonify(response), status=200)
+        return Response(json.dumps(response), status=200, content_type='application/json')
 
 
 @fs.route('/api/download/<filename>', methods=['GET'])
