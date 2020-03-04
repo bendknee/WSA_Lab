@@ -45,7 +45,7 @@ def allowed_file(filename):
 
 def zip_files(files):
 
-    zip_name = "{:s}.zip".format(str(datetime.now().strftime('%Y%m%d%H%M%S')))
+    zip_name = str(datetime.now().strftime('%Y%m%d%H%M%S'))
     # zipf = zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED)
     for file in files:
         if allowed_file(file.filename):
