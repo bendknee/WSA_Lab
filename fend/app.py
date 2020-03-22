@@ -17,7 +17,7 @@ def index():
 def uploader():
     response = relay_file_to_backend(request.files.getlist(FILE_ARG))
 
-    return Response(response.json(), status=response.status_code, content_type='application/json')
+    return Response(response.text, status=response.status_code, content_type='application/json')
 
 
 if __name__ == '__main__':
