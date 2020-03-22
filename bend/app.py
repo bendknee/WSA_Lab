@@ -39,7 +39,7 @@ def allowed_file(filename):
 
 
 def save_files(files):
-    response = {SUCCESS_UPLOAD_KEY: 0}
+    response = {SUCCESS_UPLOAD_KEY: int('0')}
 
     for file in files:
         if not allowed_file(file.filename):
