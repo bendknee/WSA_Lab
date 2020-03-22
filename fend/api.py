@@ -1,6 +1,6 @@
 import requests as r
 
-BEND_URL = "infralabs.cs.ui.ac.id"
+BEND_URL = "127.0.0.1"
 BEND_PORT = "20018"
 BEND_URI = "compress"
 FILE_ARG = "file"
