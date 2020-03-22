@@ -16,7 +16,7 @@ bend.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024
 
 @bend.route('/')
 def index():
-    return 200
+    return Response("Hi", 200)
 
 
 @bend.route('/compress', methods=['POST'])
