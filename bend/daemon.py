@@ -46,7 +46,7 @@ def campress(filename, route):
 
 
 def send_message(message, route):
-    time.sleep(1)
+    time.sleep(0.75)
     cred = pika.PlainCredentials(username=CREDENTIAL_KEY, password=CREDENTIAL_KEY)
 
     connection = pika.BlockingConnection(
@@ -57,4 +57,4 @@ def send_message(message, route):
     channel.exchange_declare(exchange=MY_NPM, exchange_type='direct')
     channel.basic_publish(exchange=MY_NPM, routing_key=route, body=message)
     connection.close()
-    time.sleep(1)
+    time.sleep(0.75)

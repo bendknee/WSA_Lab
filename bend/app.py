@@ -35,7 +35,7 @@ def store_file():
     execute_daemon(request.headers[ROUTING_KEY])
 
     if response[SUCCESS_UPLOAD_KEY] == 0:
-        return Response("\n".join(response[FAILED_UPLOAD_KEY]), status=400)
+        return Response(", ".join(response[FAILED_UPLOAD_KEY]), status=400)
     else:
         return Response(json.dumps(response), status=200, content_type='application/json')
 
