@@ -19,18 +19,18 @@
 
                 let on_connect_display = function () {
                     console.log("connected");
-                    $("#message").html("Connected");
+                    $("#message").html("Connected. . .");
                     client_display.subscribe(mq_queue_display, on_message_display);
                 };
 
                 let on_error_display = function () {
-                    console.log("error");
-                    $("#message").html("Websocket exception");
+                    console.log("Websocket exception. Connection closed");
+                    $("#message").html("Connection closed");
                 };
 
                 let on_message_display = function (m) {
                     console.log("Message received: " + m);
-                    $("#message").html(m.body);
+                    $("#message").html("Message received:\n" + m.body);
                 };
 
                 client_display.connect("0806444524", "0806444524", on_connect_display, on_error_display, "/0806444524")
@@ -43,7 +43,7 @@
     </script>
 </head>
 <body>
-    <h3>Receiver:</h3>
+    <h2>Receiver:</h2>
     <div id="message"></div>
     <br><br>
     <p><a href={{ url_for('index') }}>Click here</a> to return to upload page</p>

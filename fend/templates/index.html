@@ -5,10 +5,12 @@
     <title>LAW-3 Benny</title>
 </head>
 <body>
-    <form action="{{ url_for('uploader') }}" method="POST" enctype="multipart/form-data">
-        Select file:
-        <input type="file" name="file" multiple required><br>
-        <input type="submit" value="Submit">
-    </form>
+    <fieldset style="width: 30%">
+        <form action="{{ url_for('uploader') }}" method="POST" enctype="multipart/form-data">
+            Select file(s):
+            <input type="file" name="file" multiple required><br>
+            <input type="submit" value="Submit">
+        </form>
+    </fieldset>
 </body>
 </html>

@@ -13,5 +13,5 @@ def relay_file_to_backend(files):
     url = "http://{:s}:{:s}/{:s}".format(BEND_URL, BEND_PORT, BEND_URI)
     all_files = [(FILE_ARG, (f.filename, f.stream, f.mimetype)) for f in files]
     headers = {ROUTING_KEY: str(uuid.uuid4())}
-    req = r.post(url, files=all_files, headers=headers)
-    return req
+    response = r.post(url, files=all_files, headers=headers)
+    return headers[ROUTING_KEY], response

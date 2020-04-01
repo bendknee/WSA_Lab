@@ -1,10 +1,8 @@
-from flask import Flask, render_template, request, json, redirect, url_for
+from flask import Flask, render_template, request, Response, abort, json
 
-from fend import api
 from fend.api import relay_file_to_backend
 
 FILE_ARG = "file"
-SUCCESS_UPLOAD_KEY = "total_saved"
 
 fend = Flask(__name__)
 fend.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024
@@ -22,9 +20,11 @@ def receiver(route):
 
 @fend.route('/upload', methods=['POST'])
 def uploader():
-    response = relay_file_to_backend(request.files.getlist(FILE_ARG))
-    response_dict = json.loads(response.text)
-    return redirect(url_for("receiver", route=response_dict[api.ROUTING_KEY]))
+    routing_key, response = relay_file_to_backend(request.files.getlist(FILE_ARG))
+    if response.status_code != 200:
+        abort(Response(response.text, status=response.status_code))
+
+    return render_template('redirect.html', route_key=routing_key, bend_resp=json.loads(response.text))
 
 
 if __name__ == '__main__':

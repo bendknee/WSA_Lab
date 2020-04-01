@@ -14,7 +14,7 @@ MESSAGE_TEMPLATE = "{:d}% compressing file {:s}"
 
 DAEMON_DIR_PATH = '/home/daemon'
 PROCESSED_DIR_PATH = DAEMON_DIR_PATH + '/processed'
-ROUTING_KEY = "X_ROUTING_KEY"
+
 
 def execute(routing_key):
     (_, _, filenames) = next(walk(DAEMON_DIR_PATH))
@@ -46,7 +46,7 @@ def campress(filename, route):
 
 
 def send_message(message, route):
-    time.sleep(0.5)
+    time.sleep(1)
     cred = pika.PlainCredentials(username=CREDENTIAL_KEY, password=CREDENTIAL_KEY)
 
     connection = pika.BlockingConnection(
@@ -57,4 +57,4 @@ def send_message(message, route):
     channel.exchange_declare(exchange=MY_NPM, exchange_type='direct')
     channel.basic_publish(exchange=MY_NPM, routing_key=route, body=message)
     connection.close()
-    time.sleep(0.5)
+    time.sleep(1)

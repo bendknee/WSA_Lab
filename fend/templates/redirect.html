@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="3;url={{ url_for('receiver', route=route_key) }}" />
+    <title>Redirecting...</title>
+</head>
+<body>
+    <h3>Backend response:</h3>
+    {% for key, value in bend_resp.items() %}
+        <p>{{ key }}: {{ value }}</p>
+        <br>
+    {% endfor %}
+    <br>
+    <p>Redirecting you to receiver. . .</p>
+</body>
+</html>
