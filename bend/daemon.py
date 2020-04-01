@@ -1,4 +1,5 @@
 import shutil
+import time
 from os import walk
 from os.path import join
 
@@ -9,27 +10,25 @@ MY_NPM = "1606917550"
 RABBIT_HOST = "152.118.148.95"
 RABBIT_PORT = 5672
 
+MESSAGE_TEMPLATE = "{:d}% compressing file {:s}"
+
 DAEMON_DIR_PATH = '/home/daemon'
 PROCESSED_DIR_PATH = DAEMON_DIR_PATH + '/processed'
 ROUTING_KEY = "X_ROUTING_KEY"
 
-
 def execute(routing_key):
     (_, _, filenames) = next(walk(DAEMON_DIR_PATH))
     if len(filenames) > 0:
-        connection, channel = publisher_setup()
         for f in filenames:
-            campress(f, routing_key, channel)
+            campress(f, routing_key)
             move_processed_file(f)
-
-        connection.close()
 
 
 def move_processed_file(filename):
     shutil.move(join(DAEMON_DIR_PATH, filename), join(PROCESSED_DIR_PATH, filename))
 
 
-def campress(filename, route, channel):
+def campress(filename, route):
     file = open(join(DAEMON_DIR_PATH, filename), 'rb')
     byte_length = file.seek(0, 2)
     file.seek(0, 0)
@@ -39,14 +38,15 @@ def campress(filename, route, channel):
         file.read(1)
 
         if file.tell() / byte_length >= i:
-            send_message(i, filename, route, channel)
+            msg = MESSAGE_TEMPLATE.format(int(i * 100), filename)
+            send_message(msg, route)
             i += 0.1
-        # time.sleep(0.0005)
-    send_message(1, filename, route, channel)
+    send_message(MESSAGE_TEMPLATE.format(int(100), filename), route)
     file.close()
 
 
-def publisher_setup():
+def send_message(message, route):
+    time.sleep(0.5)
     cred = pika.PlainCredentials(username=CREDENTIAL_KEY, password=CREDENTIAL_KEY)
 
     connection = pika.BlockingConnection(
@@ -55,9 +55,6 @@ def publisher_setup():
     )
     channel = connection.channel()
     channel.exchange_declare(exchange=MY_NPM, exchange_type='direct')
-    return connection, channel
-
-
-def send_message(percent, filename, route, channel):
-    msg = "{:d}% compressing file {:s}".format(int(percent * 100), filename)
-    channel.basic_publish(exchange=MY_NPM, routing_key=route, body=msg)
+    channel.basic_publish(exchange=MY_NPM, routing_key=route, body=message)
+    connection.close()
+    time.sleep(0.5)
