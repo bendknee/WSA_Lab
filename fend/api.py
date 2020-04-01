@@ -12,5 +12,5 @@ ROUTING_KEY = "X_ROUTING_KEY"
 def relay_file_to_backend(files):
     url = "http://{:s}:{:s}/{:s}".format(BEND_URL, BEND_PORT, BEND_URI)
     all_files = [(FILE_ARG, (f.filename, f.stream, f.mimetype)) for f in files]
-    req = r.post(url, files=all_files, headers={ROUTING_KEY, str(uuid.uuid4())})
+    req = r.post(url, files=all_files, headers={ROUTING_KEY: str(uuid.uuid4())})
     return req
