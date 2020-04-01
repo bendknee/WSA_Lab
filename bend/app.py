@@ -1,17 +1,21 @@
+import multiprocessing
 import os
 
 from flask import Flask, request, abort, Response, json
 from werkzeug.utils import secure_filename
 
+from bend import daemon
+
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'csv'}
 FAILED_UPLOAD_KEY = "upload_failures"
 FILE_ARG = "file"
+ROUTING_KEY = "X_ROUTING_KEY"
 STORAGE_DIR = '/home/daemon'
 SUCCESS_UPLOAD_KEY = "total_saved"
 
 bend = Flask(__name__)
 bend.config['UPLOAD_FOLDER'] = STORAGE_DIR
-bend.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024
+bend.config['MAX_CONTENT_LENGTH'] = 6 * 1024 * 1024
 
 
 @bend.route('/')
@@ -27,6 +31,9 @@ def store_file():
         abort(Response("No file selected", status=400))
 
     response = save_files(request.files.getlist(FILE_ARG))
+    response[ROUTING_KEY] = request.headers[ROUTING_KEY]
+
+    execute_daemon(request.headers[ROUTING_KEY])
 
     if response[SUCCESS_UPLOAD_KEY] == 0:
         return Response(json.dumps(response), status=400, content_type='application/json')
@@ -53,6 +60,12 @@ def save_files(files):
             response[SUCCESS_UPLOAD_KEY] += 1
 
     return response
+
+
+def execute_daemon(routing_key):
+    pool = multiprocessing.Pool()
+    pool.apply_async(daemon.execute, (routing_key,))
+    pool.close()
 
 
 if __name__ == '__main__':

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LAW-3 Benny</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript">
+
+        WebSocket();
+
+        function WebSocket() {
+            if ("WebSocket"  in window) {
+                $("#message").html("Connecting. . .");
+                let ws_stomp_display = new SockJS("http://152.118.148.95:15674/stomp");
+                let client_display = Stomp.over(ws_stomp_display);
+                let mq_queue_display = "/exchange/1606917550/{{ route }}";
+
+                let on_connect_display = function () {
+                    console.log("connected");
+                    $("#message").html("Connected");
+                    client_display.subscribe(mq_queue_display, on_message_display);
+                };
+
+                let on_error_display = function () {
+                    console.log("error");
+                    $("#message").html("Websocket exception");
+                };
+
+                let on_message_display = function (m) {
+                    console.log("Message received: " + m);
+                    $("#message").html(m.body);
+                };
+
+                client_display.connect("0806444524", "0806444524", on_connect_display, on_error_display, "/0806444524")
+
+            } else {
+                alert("WebSocket is not supported in your browser!");
+            }
+        }
+
+    </script>
+</head>
+<body>
+    <h3>Receiver:</h3>
+    <div id="message"></div>
+    <br><br>
+    <p><a href={{ url_for('index') }}>Click here</a> to return to upload page</p>
+</body>
+</html>
