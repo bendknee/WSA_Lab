@@ -1,7 +1,8 @@
-requests
 Click==7.0
 Flask==1.1.1
 itsdangerous==1.1.0
 Jinja2==2.11.1
 MarkupSafe==1.1.1
+python-logstash-async>=1.4.1
+requests
 Werkzeug==1.0.0
