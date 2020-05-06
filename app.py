@@ -5,6 +5,7 @@ from flask import Flask, render_template, request, abort, Response, redirect, ur
 
 import daemon
 
+FILENAME_ARG = "filename"
 URL_ARG = "link"
 
 app = Flask(__name__)
@@ -35,8 +36,14 @@ def download():
     return redirect(url_for("progress", route=routing_key))
 
 
-@app.route('/retrieve/<filename>', methods=['GET'])
-def retrieve(filename):
+@app.route('/retrieve/', methods=['GET'])
+def retrieve():
+    filename = request.args.get(FILENAME_ARG)
+    if filename is None:
+        abort(Response("`{:s}` argument required".format(FILENAME_ARG), status=400))
+    if len(filename) == 0:
+        abort(Response("`{:s}` argument is empty".format(FILENAME_ARG), status=400))
+
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 

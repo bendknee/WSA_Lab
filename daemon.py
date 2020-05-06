@@ -14,7 +14,7 @@ DIR_PATH = '/home/cots/'
 def execute(url, routing_key, host_address):
     send_message("Initiate download {:s}".format(url), routing_key)
     filename = download_file(url, routing_key)
-    send_message("Download finished: {:s}{:s}".format(host_address, filename), routing_key)
+    send_message("Download finished: {:s}?filename={:s}".format(host_address, filename), routing_key)
 
 
 def download_file(url, routing_key):
