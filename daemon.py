@@ -7,7 +7,7 @@ RABBIT_HOST = "152.118.148.95"
 RABBIT_PORT = 5672
 
 FINISH_TEMPLATE = "Download finished. Open here: {:s}?filename={:s}"
-PROGRESS_TEMPLATE = "Downloading {:s}: {:.2f}% of {:d} byte(s)"
+PROGRESS_TEMPLATE = "Downloading {:s}: {:.2f}% of {:s} byte(s)"
 
 DIR_PATH = '/home/cots/'
 
