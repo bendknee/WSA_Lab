@@ -36,7 +36,7 @@ def download_file(url, routing_key):
         file.write(response.content)
     else:
         written = 0
-        for chunk in response.iter_content(chunk_size=512):
+        for chunk in response.iter_content(chunk_size=8192):
             written += len(chunk)
             progress = (written / int(size)) * 100
             send_message(PROGRESS_TEMPLATE.format(url, progress), routing_key)
@@ -44,7 +44,7 @@ def download_file(url, routing_key):
 
     response.close()
     file.close()
-    send_message("Download finished: %s".format(url_for("retrieve", filename=filename)), routing_key)
+    send_message("Download finished: {:s}".format(url_for("retrieve", filename=filename)), routing_key)
 
 
 def send_message(message, route):
