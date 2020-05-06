@@ -30,7 +30,7 @@ def download():
         abort(Response("`{:s}` argument is empty".format(URL_ARG), status=400))
 
     routing_key = str(uuid.uuid4())
-    execute_daemon(url, routing_key)
+    execute_daemon(url, routing_key, url_for("retrieve"))
 
     return redirect(url_for("progress", route=routing_key))
 
@@ -40,9 +40,9 @@ def retrieve(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
-def execute_daemon(url, routing_key):
+def execute_daemon(url, routing_key, host_address):
     pool = multiprocessing.Pool()
-    pool.apply_async(daemon.execute, (url, routing_key,))
+    pool.apply_async(daemon.execute, (url, routing_key, host_address))
     pool.close()
 
 

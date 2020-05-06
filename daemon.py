@@ -1,8 +1,5 @@
-import time
-
 import pika
 import requests
-from flask import url_for
 
 CREDENTIAL_KEY = "0806444524"
 MY_NPM = "1606917550"
@@ -14,9 +11,10 @@ PROGRESS_TEMPLATE = "Downloading {:s}: {:.2f}%"
 DIR_PATH = '/home/cots/'
 
 
-def execute(url, routing_key):
+def execute(url, routing_key, host_address):
     send_message("Initiate download {:s}".format(url), routing_key)
-    download_file(url, routing_key)
+    filename = download_file(url, routing_key)
+    send_message("Download finished: {:s}{:s}".format(host_address, filename), routing_key)
 
 
 def download_file(url, routing_key):
@@ -36,7 +34,7 @@ def download_file(url, routing_key):
         file.write(response.content)
     else:
         written = 0
-        for chunk in response.iter_content(chunk_size=8192):
+        for chunk in response.iter_content(chunk_size=4096):
             written += len(chunk)
             progress = (written / int(size)) * 100
             send_message(PROGRESS_TEMPLATE.format(url, progress), routing_key)
@@ -44,7 +42,8 @@ def download_file(url, routing_key):
 
     response.close()
     file.close()
-    send_message("Download finished: {:s}".format(url_for("retrieve", filename=filename)), routing_key)
+
+    return filename
 
 
 def send_message(message, route):
@@ -58,4 +57,3 @@ def send_message(message, route):
     channel.exchange_declare(exchange=MY_NPM, exchange_type='direct')
     channel.basic_publish(exchange=MY_NPM, routing_key=route, body=message)
     connection.close()
-    time.sleep(0.05)
