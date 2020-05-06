@@ -26,17 +26,17 @@ def progress(route):
 def download():
     url = request.form.get(URL_ARG)
     if url is None:
-        abort(Response("`{:s}` argument required".format(URL_ARG), status=400))
+        abort(Response("`{:s}` field required".format(URL_ARG), status=400))
     if len(url) == 0:
-        abort(Response("`{:s}` argument is empty".format(URL_ARG), status=400))
+        abort(Response("`{:s}` field is empty".format(URL_ARG), status=400))
 
     routing_key = str(uuid.uuid4())
-    execute_daemon(url, routing_key, request.host_url + url_for("retrieve"))
+    execute_daemon(url, routing_key, request.host_url + url_for("retrieve")[1:])
 
     return redirect(url_for("progress", route=routing_key))
 
 
-@app.route('/retrieve/', methods=['GET'])
+@app.route('/retrieve', methods=['GET'])
 def retrieve():
     filename = request.args.get(FILENAME_ARG)
     if filename is None:

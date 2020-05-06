@@ -6,8 +6,8 @@ MY_NPM = "1606917550"
 RABBIT_HOST = "152.118.148.95"
 RABBIT_PORT = 5672
 
-FINISH_TEMPLATE = "Download finished: {:s}?filename={:s}"
-PROGRESS_TEMPLATE = "Downloading {:s}: {:.2f}%"
+FINISH_TEMPLATE = "Download finished. Open here: {:s}?filename={:s}"
+PROGRESS_TEMPLATE = "Downloading {:s}: {:.2f}% of {:d} byte(s)"
 
 DIR_PATH = '/home/cots/'
 
@@ -38,7 +38,7 @@ def download_file(url, routing_key):
         for chunk in response.iter_content(chunk_size=8192):
             written += len(chunk)
             progress = (written / int(size)) * 100
-            send_message(PROGRESS_TEMPLATE.format(url, progress), routing_key)
+            send_message(PROGRESS_TEMPLATE.format(url, progress, size), routing_key)
             file.write(chunk)
 
     response.close()
