@@ -6,6 +6,7 @@ MY_NPM = "1606917550"
 RABBIT_HOST = "152.118.148.95"
 RABBIT_PORT = 5672
 
+FINISH_TEMPLATE = "Download finished: {:s}/retrieve?filename={:s}"
 PROGRESS_TEMPLATE = "Downloading {:s}: {:.2f}%"
 
 DIR_PATH = '/home/cots/'
@@ -14,7 +15,7 @@ DIR_PATH = '/home/cots/'
 def execute(url, routing_key, host_address):
     send_message("Initiate download {:s}".format(url), routing_key)
     filename = download_file(url, routing_key)
-    send_message("Download finished: {:s}?filename={:s}".format(host_address, filename), routing_key)
+    send_message(FINISH_TEMPLATE.format(host_address, filename), routing_key)
 
 
 def download_file(url, routing_key):

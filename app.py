@@ -31,7 +31,7 @@ def download():
         abort(Response("`{:s}` argument is empty".format(URL_ARG), status=400))
 
     routing_key = str(uuid.uuid4())
-    execute_daemon(url, routing_key, url_for("retrieve"))
+    execute_daemon(url, routing_key, request.host_url)
 
     return redirect(url_for("progress", route=routing_key))
 
