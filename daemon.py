@@ -20,10 +20,15 @@ def execute(url, routing_key):
 
 
 def download_file(url, routing_key):
-    filename = url.split('/')[-1]
-    response = requests.get(url, stream=True)
+    try:
+        response = requests.get(url, stream=True)
+    except ConnectionError:
+        send_message("Connection failed to: {:s} ".format(url), routing_key)
+        return
+
     response.raise_for_status()
 
+    filename = url.split('/')[-1]
     file = open(DIR_PATH + filename, 'wb')
     size = response.headers.get('content-length')
 
