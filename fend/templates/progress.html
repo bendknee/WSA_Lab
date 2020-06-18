@@ -52,7 +52,12 @@
                 };
 
                 let compress_handler = function(msg) {
-                    $('#squeeze').html(msg.body)
+                    if (msg.body.includes("http") || msg.body.includes("md5")) {
+                        $('#link').html(`<a href=${msg.body}>${msg.body}</a>`)
+                    }
+                    else {
+                        $('#squeeze').html(msg.body)
+                    }
                 }
 
                 let timer_handler = function(msg) {
@@ -74,25 +79,25 @@
             width: 50%;
         }
         [id*="url"] {
-            width: 85%;
+            width: 90%;
         }
     </style>
 </head>
 <body>
 
-    <div><b>Server time: </b><span id="timer"></span></div>
-    <br>
+    <b>Server time: </b><span id="timer"></span>
+    <br><br>
     <table>
       <tr><td><b>URL</b></td><td><b>Progress</b></td></tr>
-      {% for i in range(4) %}
+      {% for i in range(10) %}
           <tr><td id="url-{{ i }}"></td><td id="prog-{{ i }}"></td></tr>
       {% endfor %}
     </table>
     <br>
-    <div><b>Compression: </b><span id="squeeze"></span></div>
+    <b>Compression: </b><span id="squeeze"></span><div id="link"></div>
     <br><br>
     <a href="{{ url_for("form") }}">Return to main page</a>
-    <p id="debug"></p>
+    <!-- <p id="debug"></p> -->
 
 </body>
 </html>

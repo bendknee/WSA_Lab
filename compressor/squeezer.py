@@ -6,11 +6,11 @@ import zipfile
 
 from utils.broker import CHANNEL_COMPRESS
 
-WAITING_TIMEOUT = 10
 METAFILE_NAME = 'meta.txt'
 NGINX_PORT = os.getenv('LAW_NGINX_PORT', '20010')
 ROOT_DIR = os.getenv('LAW_ROOT_DIR', '/law')
 LINK_AGE = os.getenv('LAW_LINK_AGE', '20')
+WAITING_TIMEOUT = 10
 
 
 def execute(process_id, host_ip, client_ip, broker):

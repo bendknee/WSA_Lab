@@ -1,21 +1,19 @@
 #!/bin/bash
 
-# path of every process directory
-ROOT_DIR='/law'
-
-# expiry age of secure links in minutes
-SECURE_EXPIRY=20
-
 # frontend port
 FEND_PORT=20013
 
 # compressor port
 COMPRESS_PORT=20016
 
+# expiry age of secure links in minutes
+SECURE_EXPIRY=20
+
 # ~~ please don't ~~~
 LOG_PATH='/var/log/law'
 NGINX_PORT=20010
 PID_LIST_PATH='/tmp/law.pid'
+ROOT_DIR='/law'
 # ~~~ ~~~ ~~~ ~~~ ~~~
 
 # kill previous processes
@@ -55,6 +53,7 @@ nohup python3 -c "from timer.timekeeper import play_time; play_time()" > "${LOG_
 echo "${!}" >> "${PID_LIST_PATH}"
 
 # run nginx (server 4)
+nginx -s quit
 nginx -c /etc/nginx/nginx.conf
 cp nginx.conf /etc/nginx/nginx.conf
 nginx -s reload

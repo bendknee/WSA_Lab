@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, json
 
 from utils.broker import BrokerUtils, MODE_DIRECT, CHANNEL_DOWNLOAD
 
-FORM_SIZE = 4
+FORM_SIZE = 10
 
 app = Flask(__name__)
 

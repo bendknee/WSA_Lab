@@ -16,7 +16,7 @@ def download(broker, url, process_id):
     filepath = get_file_path(url, process_id)
     file = open(filepath, 'wb')
     try:
-        response = requests.get(url, stream=True, timeout=30)
+        response = requests.get(url, stream=True, timeout=60*10)
         size = response.headers.get('content-length')
 
         written = 0
