@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LAW Final Assignment</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript">
+
+        let rowColumnMap = new Map();
+
+        let dynamic_table = function(url, progress) {
+            if (!rowColumnMap.has(url)) {
+                let i = rowColumnMap.size;
+                rowColumnMap.set(url, [`url-${i}`, `prog-${i}`]);
+            }
+            let [idUrl, idProg] = rowColumnMap.get(url);
+            $(`#${idUrl}`).html(url);
+            $(`#${idProg}`).html(progress);
+        };
+
+        WebSocket();
+
+        function WebSocket() {
+            if ("WebSocket"  in window) {
+                let socks = new SockJS("http://152.118.148.95:15674/stomp");
+                let stomp = Stomp.over(socks);
+                stomp.reconnect_delay = 5000;
+                const base_route = "/exchange/1606917550_TOPIC/";
+                let download_route = base_route + "queue.progress.{{ route }}";
+                let compress_route = base_route + "queue.compress.{{ route }}";
+                let timer_route = base_route + "queue.timer";
+
+                let on_connect_display = function () {
+                    stomp.subscribe(download_route, download_handler);
+                    $('#debug').html("Info: connection to download channel established");
+                    stomp.subscribe(timer_route, timer_handler);
+                    $('#debug').html("Info: connection to timer channel established");
+                    stomp.subscribe(compress_route, compress_handler);
+                    $('#debug').html("Info: connection to compress channel established");
+                };
+
+                let on_error_display = function () {
+                    $('#debug').html("Debug: one connection closed");
+                };
+
+                let download_handler = function(msg) {
+                    let payload = msg.body;
+                    let json = JSON.parse(payload);
+                    dynamic_table(json.url, json.progress);
+                };
+
+                let compress_handler = function(msg) {
+                    if (msg.body.includes("http") || msg.body.includes("md5")) {
+                        $('#link').html(`<a href=${msg.body}>${msg.body}</a>`)
+                    }
+                    else {
+                        $('#squeeze').html(msg.body)
+                    }
+                }
+
+                let timer_handler = function(msg) {
+                    $('#timer').html(msg.body)
+                };
+
+                stomp.connect("0806444524", "0806444524", on_connect_display, on_error_display, "/0806444524")
+
+            } else {
+                alert("WebSocket is not supported in your browser!");
+            }
+        }
+
+    </script>
+
+    <style>
+        table, td {
+            border: 1px solid black;
+            width: 50%;
+        }
+        [id*="url"] {
+            width: 90%;
+        }
+    </style>
+</head>
+<body>
+
+    <b>Server time: </b><span id="timer"></span>
+    <br><br>
+    <table>
+      <tr><td><b>URL</b></td><td><b>Progress</b></td></tr>
+      {% for i in range(10) %}
+          <tr><td id="url-{{ i }}"></td><td id="prog-{{ i }}"></td></tr>
+      {% endfor %}
+    </table>
+    <br>
+    <b>Compression: </b><span id="squeeze"></span><div id="link"></div>
+    <br><br>
+    <a href="{{ url_for("form") }}">Return to main page</a>
+    <!-- <p id="debug"></p> -->
+
+</body>
+</html>
